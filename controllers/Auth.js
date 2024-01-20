@@ -42,7 +42,7 @@ exports.signup = async (req, res) => {
       const emailResponse = await mailSender(
         email,
         "welcome to skin sight",
-        `<p>Hi ${usename} </p>`
+        `<p>Hi ${username} </p>`
       );
       console.log("Email sent successfully:", emailResponse.response);
     } catch (error) {
@@ -129,9 +129,6 @@ exports.historycreate = async (req, res) => {
 
   try {
     console.log(req.files);
-
-    
-    
     const {up , disease, precautions } = req.files;
     
   
