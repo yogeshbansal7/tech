@@ -141,35 +141,29 @@ exports.login = async (req, res) => {
 exports.historycreate = async (req, res) => {
 
   try {
-    console.log(req.files);
-    const {up , disease, precautions } = req.files;
-    
-  
-    const upimage = await uploadImageToCloudinary(
-      up,
-      process.env.FOLDER_NAME,
-      1000,
-      1000
-    );
-    console.log(upimage.secure_url)
-    console.log(req.body)
-
-    
-    
-
-    // Validate if the required fields are present
+    console.log("entered in history create");
+    const { disease, precautions } = req.body;
     if ( !disease || !precautions || !Array.isArray(precautions)) {
       return res.status(400).json({ error: 'Please provide disease, and an array of precautions.' });
     }
 
+    // const upimage = await uploadImageToCloudinary(
+    //   up,
+    //   process.env.FOLDER_NAME,
+    //   1000,
+    //   1000
+    // );
+    // console.log(upimage.secure_url)
+    // console.log(req.body)
+
     // Create a new history entry
     const historyEntry = {
-      image: upimage.secure_url,
+      image: "",
       disease,
       precautions,
     };
 
-    // Update user's history array by pushing the new entry to the beginning
+    // // Update user's history array by pushing the new entry to the beginning
     await User.findByIdAndUpdate(
       req.user.id, // Assuming the user ID is available in req.user after authentication
       { $push: { history: { $each: [historyEntry], $position: 0 } } },
@@ -206,6 +200,24 @@ exports.historycreate = async (req, res) => {
   
   return;
 };
+
+exports.historyget = async (req, res) => {
+  try {
+    const userDetails = await User.findById(req.user.id);
+    console.log(userDetails);
+    return res.status(200).json({
+      success: true,
+      history: userDetails.history,
+      message: "History fetched successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "History cannot be fetched. Please try again.",
+    });
+  }
+}
 
 exports.changePassword = async (req, res) => {
   try {

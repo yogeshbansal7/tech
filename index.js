@@ -6,7 +6,12 @@ const dotenv = require("dotenv");
 const database = require("./config/database")
 const { cloudinaryConnect } = require("./config/cloudinary")
 const fileUpload = require("express-fileupload")
+const fs = require('fs').promises;
+
+
+
 const userRoutes = require("./routes/user")
+
 
 app.use(
   fileUpload({
