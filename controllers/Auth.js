@@ -42,7 +42,7 @@ exports.signup = async (req, res) => {
       const emailResponse = await mailSender(
         email,
         "welcome to skin sight",
-        `<p>Hi ${firstName} ${lastName},</p>`
+        `<p>Hi ${usename} </p>`
       );
       console.log("Email sent successfully:", emailResponse.response);
     } catch (error) {
@@ -126,33 +126,74 @@ exports.login = async (req, res) => {
 };
 
 exports.historycreate = async (req, res) => {
-  
+
   try {
-    const {dis} = req.files;
-    const image = await uploadImageToCloudinary(
-      dis,
+    console.log(req.files);
+
+    
+    
+    const {up , disease, precautions } = req.files;
+    
+  
+    const upimage = await uploadImageToCloudinary(
+      up,
       process.env.FOLDER_NAME,
       1000,
       1000
     );
-    console.log(image.secure_url)
-    return res.status(200).json({
-      success: true,
-      image,
-      message: `Image uploaded successfully`,
-    });
-  } catch {
-    return res.status(500).json({
-      success: false,
-      message: `Image not uploaded`,
-    });
+    console.log(upimage.secure_url)
+    console.log(req.body)
+    return;
+    
+    
+
+    // Validate if the required fields are present
+    if ( !disease || !precautions || !Array.isArray(precautions)) {
+      return res.status(400).json({ error: 'Please provide disease, and an array of precautions.' });
+    }
+
+    // Create a new history entry
+    const historyEntry = {
+      image: upimage.secure_url,
+      disease,
+      precautions,
+    };
+
+    // Update user's history array by pushing the new entry to the beginning
+    await User.findByIdAndUpdate(
+      req.user.id, // Assuming the user ID is available in req.user after authentication
+      { $push: { history: { $each: [historyEntry], $position: 0 } } },
+      { new: true }
+    );
+
+    return res.json({ success: true, message: 'History collected successfully.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-  const image = await uploadImageToCloudinary(
-    dis,
-    process.env.FOLDER_NAME,
-    1000,
-    1000
-  );
+
+  
+  // try {
+    // const {dis} = req.files;
+    // const image = await uploadImageToCloudinary(
+    //   dis,
+    //   process.env.FOLDER_NAME,
+    //   1000,
+    //   1000
+    // );
+    // console.log(image.secure_url)
+  //   return res.status(200).json({
+  //     success: true,
+  //     image,
+  //     message: `Image uploaded successfully`,
+  //   });
+  // } catch {
+  //   return res.status(500).json({
+  //     success: false,
+  //     message: `Image not uploaded`,
+  //   });
+  // }
+  
   return;
 };
 
