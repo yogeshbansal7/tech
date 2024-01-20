@@ -28,6 +28,8 @@ exports.signup = async (req, res) => {
       });
     }
 
+    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -35,6 +37,16 @@ exports.signup = async (req, res) => {
       email,
       password: hashedPassword,
     });
+
+    const token = jwt.sign(
+      { email: user.email, id: user._id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h",
+      }
+    );
+
+    user.token = token;
 
     console.log("user signed");
 
@@ -99,6 +111,7 @@ exports.login = async (req, res) => {
       );
 
       user.token = token;
+      user.save();
       user.password = undefined;
       const options = {
         expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),

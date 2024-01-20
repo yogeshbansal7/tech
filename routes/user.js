@@ -7,7 +7,6 @@ const { auth } = require("../middleware/auth");
 // Route for user signup
 router.post("/signup", signup);
 router.post("/login", login);
-router.post("/changepassword", auth, changePassword)
 router.post("/historycreated", auth, historycreate)
 
 
