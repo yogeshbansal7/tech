@@ -3,12 +3,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema(
   {
     // Define the name field with type String, required, and trimmed
-    firstName: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    lastName: {
+    username:{
       type: String,
       required: true,
       trim: true,
@@ -26,10 +21,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    contactNumber: {
-      type: Number,
-      trim: true,
-    },
+   
 
     token: {
       type: String,

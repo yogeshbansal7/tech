@@ -8,12 +8,12 @@ require("dotenv").config();
 exports.signup = async (req, res) => {
   try {
     console.log("entered in signup");
-    const { firstName, lastName, email, password, contactNumber, gender } =
+    const { username, email, password} =
       req.body;
 
     console.log(req.files);
 
-    if (!firstName || !lastName || !email || !password || !contactNumber) {
+    if ( !username || !email || !password ) {
       return res.status(403).send({
         success: false,
         message: "All Fields are required",
@@ -31,12 +31,9 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      firstName,
-      lastName,
+      username,
       email,
       password: hashedPassword,
-      contactNumber,
-      gender,
     });
 
     console.log("user signed");
