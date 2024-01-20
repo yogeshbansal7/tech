@@ -140,7 +140,7 @@ exports.historycreate = async (req, res) => {
     );
     console.log(upimage.secure_url)
     console.log(req.body)
-    return;
+
     
     
 
